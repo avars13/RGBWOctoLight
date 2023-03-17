@@ -153,9 +153,9 @@ class OctoLightPlugin(
 				type="github_release",
 				current=self._plugin_version,
 
-				user="gigibu5",
+				user="avars13",
 				repo="RGBWOctoLight",
-				pip="https://github.com/gigibu5/OctoLight/archive/{target}.zip"
+				pip="https://github.com/avars13/RGBWOctoLight/archive/{target}.zip"
 			)
 		)
 
