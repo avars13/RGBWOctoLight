@@ -7,6 +7,13 @@ import flask
 
 import RPi.GPIO as GPIO
 
+#avs import changes
+import board
+import pixel
+ORDER = neopixel.GRBW
+pixels = neopixel.NeoPixel(board.D21, 8, brightness=0.2, auto_write=False,pixel_order=ORDER)
+
+
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
@@ -24,7 +31,7 @@ class OctoLightPlugin(
 
 	def get_settings_defaults(self):
 		return dict(
-			light_pin = 13,
+			light_pin = 13, #was 13
 			inverted_output = False
 		)
 
@@ -60,7 +67,7 @@ class OctoLightPlugin(
 		else:
 			GPIO.output(int(self._settings.get(["light_pin"])), GPIO.LOW)
 
-		#Because light is set to ff on startup we don't need to retrieve the current state
+		#Because light is set to off on startup we don't need to retrieve the current state
 		"""
 		r = self.light_state = GPIO.input(int(self._settings.get(["light_pin"])))
         if r==1:
@@ -100,7 +107,8 @@ class OctoLightPlugin(
 			self.light_toggle()
 
 			return flask.jsonify(state=self.light_state)
-
+					
+			
 		elif action == "getState":
 			return flask.jsonify(state=self.light_state)
 
@@ -109,13 +117,25 @@ class OctoLightPlugin(
 				self.light_toggle()
 
 			return flask.jsonify(state=self.light_state)
-
+			
+			
+			#avs edit
+			pixels.fill((0, 0, 0, 255))
+			pixels.show()
+			
+			
 		elif action == "turnOff":
 			if self.light_state:
 				self.light_toggle()
 
 			return flask.jsonify(state=self.light_state)
-
+			
+			
+			#avs edit
+			pixels.fill((0, 0, 0, 0))
+			pixels.show()
+			
+			
 		else:
 			return flask.jsonify(error="action not recognized")
 
@@ -127,20 +147,21 @@ class OctoLightPlugin(
 	def get_update_information(self):
 		return dict(
 			octolight=dict(
-				displayName="OctoLight",
+				displayName="RGBWOctoLight",
 				displayVersion=self._plugin_version,
 
 				type="github_release",
 				current=self._plugin_version,
 
 				user="gigibu5",
-				repo="OctoLight",
+				repo="RGBWOctoLight",
 				pip="https://github.com/gigibu5/OctoLight/archive/{target}.zip"
 			)
 		)
 
 __plugin_pythoncompat__ = ">=2.7,<4"
-__plugin_implementation__ = OctoLightPlugin()
+__plugin_implementation__ = RGBWOctoLightPlugin()
+#__plugin_implementation__ = OctoLightPlugin()
 
 __plugin_hooks__ = {
 	"octoprint.plugin.softwareupdate.check_config":
